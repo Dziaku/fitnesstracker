@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -32,11 +33,12 @@ class Meal(models.Model):
     def __str__(self) -> str:
         return self.name
     
-    def get_meal_energy(self):
+    @property
+    def total_meal_energy(self):
         energy = 0
         for ingredient in self.ingredients.all():
-            ingredientquantity = IngredientQuantity.objects.get(ingredient=ingredient, meal=self)
-            energy += ingredient.energy_density * ingredientquantity.ingredient_quantity 
+            quantity = IngredientQuantity.objects.get(ingredient=ingredient, meal=self).ingredient_quantity
+            energy += ingredient.energy_density * quantity 
         return energy
 
     
@@ -47,3 +49,27 @@ class IngredientQuantity(models.Model):
 
     def __str__(self):
         return "{}_{}:{}".format(self.meal.__str__(), self.ingredient.__str__(), self.ingredient_quantity)
+    
+class DailyConsumption(models.Model):
+    date = models.DateField(default=timezone.now)
+    meals = models.ManyToManyField(Meal, through='MealQuantity')
+    eater = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('date','eater'),)
+
+    def __str__(self) -> str:
+        return f'{self.eater} consumed {self.total_day_energy}'
+    
+    @property
+    def total_day_energy(self):
+        energy = 0
+        for meal in self.meals.all():
+            quantity = MealQuantity.objects.get(meal=meal, day=self).meal_quantity
+            energy += meal.total_meal_energy*quantity
+        return energy
+
+class MealQuantity(models.Model):
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    day = models.ForeignKey(DailyConsumption, on_delete=models.CASCADE)
+    meal_quantity = models.IntegerField(default=1, choices=((i,i) for i in range(1, 101)))
