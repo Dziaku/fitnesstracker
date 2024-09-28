@@ -55,7 +55,7 @@ ROOT_URLCONF = 'fitnesstracker.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/"templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,3 +124,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "kcal.User"
+
+LOGIN_REDIRECT_URL = '/accounts/login'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000"]

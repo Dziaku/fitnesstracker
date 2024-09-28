@@ -46,9 +46,6 @@ class IngredientQuantity(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
     ingredient_quantity = models.FloatField()
-
-    def __str__(self):
-        return "{}_{}:{}".format(self.meal.__str__(), self.ingredient.__str__(), self.ingredient_quantity)
     
 class DailyConsumption(models.Model):
     date = models.DateField(default=timezone.now)

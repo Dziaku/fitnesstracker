@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <table>
+        <tr>
+            <td>Meal</td>
+            <td>Total meal kilocalories</td>
+        </tr>
+        {% for i in object_list %}
+        <tr>
+            <td>{{i.meal}}</a></td>
+            <td>{{i.total_meal_energy}}</td>
+        </tr>
+        {% empty %}
+            <tr><td>Nothing has been added yet.</td></tr>
+        {% endfor %}
+    </table>
+{% endblock %}

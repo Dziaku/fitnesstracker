@@ -1,0 +1,24 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <table>
+        <tr>
+            <td>Name</td>
+            <td>Ingredients</td>
+            <td>Total meal energy</td>
+            <td>Author</td>
+            <td><a href={% url 'kcal:add-meal' %}>Add meal</a></td>
+        </tr>
+        {% for meal in object_list %}
+        <tr>
+            <td><a href={% url "kcal:meal-detail" meal.id %}>{{meal.name}}</a></td>
+            <td>{% for i in meal.ingredients.all %}<li>{{i.name}}</li>{% endfor %}</td>
+            <td>{{meal.total_meal_energy}}</td>
+            <td>{{model.author}}</td>
+        </tr>
+        {% empty %}
+        <tr><td>Nothing is here. Yet.</td></tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+        
