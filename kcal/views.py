@@ -1,12 +1,35 @@
-from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import *
 from django.views import generic
+from django.shortcuts import redirect, render
 
 from .models import *
+from .forms import *
+
+# GENERAL VIEWS
 
 def main(request):
   return render(request, "main_index.html")
+
+def sign_up(request):
+    if request.method == 'GET':
+        form = RegisterForm()
+        return render(request, 'register.html', { 'form': form})
+    if request.method == 'POST':
+        form = RegisterForm(request.POST) 
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            messages.success(request, 'You have singed up successfully.')
+            login(request, user)
+            return redirect('kcal:index')
+        else:
+            return render(request, 'register.html', {'form': form}) 
+
+# KCAL APP VIEWS
 
 class KcalIndex(LoginRequiredMixin, generic.ListView):
     model = DailyConsumption
@@ -59,6 +82,8 @@ class EditIngredient(LoginRequiredMixin, generic.UpdateView):
    def form_valid(self, form):
     form.instance.author = self.request.user
     return super(EditIngredient, self).form_valid(form)
+
+   
 
   
 
