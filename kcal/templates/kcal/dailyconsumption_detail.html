@@ -1,5 +1,24 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-   {{object.meals}}
+<table>
+   <thead>
+      <tr>
+         <td>Calories intake on {{object.date}}.</td>
+         <td><a href="{% url 'kcal:edit-day' object.id %}">Edit day</a></td>
+      </tr>
+      <tr><td>Total calories eaten: {{object.total_day_energy}}</td></tr>
+   </thead>
+   <tr>
+      <td> Meal </td>
+      <td> Meal calories </td>
+   </tr>
+   {% for meal in object.meals.all %}
+   <tr>
+      <td>{{meal.name}}</td>
+      <td>{{meal.total_meal_energy}}</td>
+   </tr>
+   {% endfor %}
+</table>
+   
 {% endblock %}

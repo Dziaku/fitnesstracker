@@ -29,7 +29,7 @@ def sign_up(request):
         else:
             return render(request, 'register.html', {'form': form}) 
 
-# KCAL APP VIEWS
+# KCAL-APP VIEWS
 
 class KcalIndex(LoginRequiredMixin, generic.ListView):
     model = DailyConsumption
@@ -42,6 +42,24 @@ class DailyConsumptionDetail(LoginRequiredMixin, generic.DetailView):
     model = DailyConsumption
     template_name = 'kcal/dailyconsumption_detail.html'
 
+class AddDay(LoginRequiredMixin, generic.CreateView):
+   model = DailyConsumption
+   fields = ['date', 'meals']
+   template_name = 'kcal/generic_form.html'
+   
+   def form_valid(self, form):    
+    form.instance.eater = self.request.user
+    return super(AddDay, self).form_valid(form)
+   
+class EditDay(LoginRequiredMixin,generic.UpdateView):
+   model = DailyConsumption
+   fields = ['date', 'meals']
+   template_name = 'kcal/generic_form.html'
+   
+   def form_valid(self, form):    
+    form.instance.eater = self.request.user
+    return super(EditDay, self).form_valid(form)
+
 class MealList(generic.ListView):
    model = Meal
 
@@ -49,7 +67,7 @@ class AddMeal(LoginRequiredMixin, generic.CreateView):
    model = Meal
    template_name = 'kcal/generic_form.html'
    fields = ['name', 'ingredients']
-
+    
    def form_valid(self, form):
     form.instance.author = self.request.user
     return super(AddMeal, self).form_valid(form)

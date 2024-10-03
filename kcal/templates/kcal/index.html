@@ -3,9 +3,9 @@
 {% block content %}
     <table>
         <tr>
-            <td>Date</td>
-            <td>Meals</td>
-            <td>Total kilocalories consuemd</td>
+            <td> Date </td>
+            <td> Meals </td>
+            <td> Total kilocalories consuemd </td>
         </tr>
         {% for day in object_list %}
         <tr>
@@ -16,5 +16,6 @@
         {% empty %}
             <tr><td>Nothing has been added yet.</td></tr>
         {% endfor %}
+        <tr><td><a href="{% url "kcal:add-day" %}">Add new day</a></td></tr>
     </table>
 {% endblock %}

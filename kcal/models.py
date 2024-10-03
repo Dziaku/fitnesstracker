@@ -54,7 +54,7 @@ class Meal(models.Model):
 class IngredientQuantity(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
-    ingredient_quantity = models.FloatField()
+    ingredient_quantity = models.FloatField(default= 1)
     
 class DailyConsumption(models.Model):
     date = models.DateField(default=timezone.now)
@@ -63,6 +63,9 @@ class DailyConsumption(models.Model):
 
     class Meta:
         unique_together = (('date','eater'),)
+    
+    def get_absolute_url(self):
+        return reverse("kcal:index") 
 
     def __str__(self) -> str:
         return f'{self.eater} consumed {self.total_day_energy}'
