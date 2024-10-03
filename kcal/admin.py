@@ -21,5 +21,5 @@ class DailyConsumptionAdmin(admin.ModelAdmin):
     search_fields = ['date', 'eater']
 
 admin.site.register(DailyConsumption, DailyConsumptionAdmin)
-admin.site.register(User, UserAdmin)
 admin.site.register(Meal, MealAdmin)
+admin.site.register(Ingredient)

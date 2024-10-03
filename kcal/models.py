@@ -2,10 +2,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-
-
-class User(AbstractUser):
-    pass
+from django.urls import reverse
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
@@ -17,8 +14,14 @@ class Ingredient(models.Model):
         blank=True,
     ) 
 
+    class Meta:
+        ordering = ['name', 'energy_density']
+
     def __str__(self) -> str:
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse("kcal:ingredients") 
     
 class Meal(models.Model):
     ingredients = models.ManyToManyField(Ingredient, through='IngredientQuantity')
@@ -30,8 +33,14 @@ class Meal(models.Model):
         blank=True,
     )
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self) -> str:
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse("kcal:meals") 
     
     @property
     def total_meal_energy(self):

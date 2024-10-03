@@ -4,11 +4,13 @@
     <table>
         <tr>
             <td>Date</td>
+            <td>Meals</td>
             <td>Total kilocalories consuemd</td>
         </tr>
         {% for day in object_list %}
         <tr>
             <td><a href={% url 'kcal:day' day.id %}>{{day.date}}</a></td>
+            <td>{% for meal in day.meals.all %} <li>{{meal.name}}</li> {% endfor %} </td>
             <td>{{day.total_day_energy}}</td>
         </tr>
         {% empty %}

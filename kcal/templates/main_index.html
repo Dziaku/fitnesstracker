@@ -1,5 +1,9 @@
 {% extends "base_generic.html" %}
 
-{% block content %}
-    Welcome to Fitness Tracker. Please log in to continue.
+{% block content %} 
+    {% if not user.is_authenticated %} 
+        Wlecome to Fitness Tracekr. Please log in to continue.
+    {% else %}
+        Welcome {{user.username}} to Fitness Tracker.
+    {% endif %}
 {% endblock %}

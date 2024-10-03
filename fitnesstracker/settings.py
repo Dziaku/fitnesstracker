@@ -123,10 +123,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = "kcal.User"
-
-LOGIN_REDIRECT_URL = '/accounts/login'
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000"]
+
+LOGIN_REDIRECT_URL = '/'
