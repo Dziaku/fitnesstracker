@@ -67,7 +67,7 @@ class AddMeal(LoginRequiredMixin, generic.CreateView):
    model = Meal
    template_name = 'kcal/generic_form.html'
    fields = ['name', 'ingredients']
-    
+
    def form_valid(self, form):
     form.instance.author = self.request.user
     return super(AddMeal, self).form_valid(form)
@@ -86,7 +86,7 @@ class IngredientDetail(generic.DetailView):
 class AddIngredient(LoginRequiredMixin, generic.CreateView):
    model = Ingredient
    template_name = 'kcal/generic_form.html'
-   fields = ['name', 'energy_density']
+   form_class = IngredientForm
 
    def form_valid(self, form):
     form.instance.author = self.request.user

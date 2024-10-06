@@ -2,7 +2,13 @@
 
 {% block content %}
     <form method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Save">
+        <fieldset>
+            {% for field in form %}
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }} {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small> {% endif %}
+            {% endfor %}
+        </fieldset>
+    <input type="submit" value="Save!">
     </form>
 {% endblock %}
