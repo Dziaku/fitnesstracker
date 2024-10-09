@@ -46,8 +46,9 @@ class Meal(models.Model):
     def total_meal_energy(self):
         energy = 0
         for ingredient in self.ingredients.all():
-            quantity = IngredientQuantity.objects.get(ingredient=ingredient, meal=self).ingredient_quantity
-            energy += ingredient.energy_density * quantity 
+            quantity = IngredientQuantity.objects.get(ingredient=ingredient, meal=self).ingredient_quantity / 100
+            energy += ingredient.energy_density * quantity
+            energy = round(energy, 1) 
         return energy
 
     

@@ -1,21 +1,41 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <table>
-        <tr>
-            <td> Date </td>
-            <td> Meals </td>
-            <td> Total kilocalories consuemd </td>
-        </tr>
-        {% for day in object_list %}
-        <tr>
-            <td><a href={% url 'kcal:day' day.id %}>{{day.date}}</a></td>
-            <td>{% for meal in day.meals.all %} <li>{{meal.name}}</li> {% endfor %} </td>
-            <td>{{day.total_day_energy}}</td>
-        </tr>
-        {% empty %}
-            <tr><td>Nothing has been added yet.</td></tr>
-        {% endfor %}
-        <tr><td><a href="{% url "kcal:add-day" %}">Add new day</a></td></tr>
+<div class="container mt-4">
+    <h2 class="mb-4">Daily Meals and Total Kilocalories</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Meals</th>
+                <th scope="col">Total Kilocalories Consumed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for day in object_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'kcal:day' day.id %}" class="text-decoration-none">{{ day.date }}</a>
+                </td>
+                <td>
+                    <ul class="list-unstyled">
+                        {% for meal in day.meals.all %}
+                        <li>{{ meal.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ day.total_day_energy }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">Nothing has been added yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
+    
+    <div class="text-end">
+        <a href="{% url 'kcal:add-day' %}" class="btn btn-primary">Add New Day</a>
+    </div>
+</div>
 {% endblock %}

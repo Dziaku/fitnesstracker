@@ -29,7 +29,8 @@ def sign_up(request):
         else:
             return render(request, 'register.html', {'form': form}) 
 
-# KCAL-APP VIEWS
+## KCAL-APP VIEWS
+# DailyConsumption CRUD
 
 class KcalIndex(LoginRequiredMixin, generic.ListView):
     model = DailyConsumption
@@ -60,22 +61,84 @@ class EditDay(LoginRequiredMixin,generic.UpdateView):
     form.instance.eater = self.request.user
     return super(EditDay, self).form_valid(form)
 
+# Meal CRUD
+
 class MealList(generic.ListView):
    model = Meal
 
 class AddMeal(LoginRequiredMixin, generic.CreateView):
-   model = Meal
-   template_name = 'kcal/generic_form.html'
-   fields = ['name', 'ingredients']
+    model = Meal
+    form_class = MealForm
+    
+    def get_context_data(self, **kwargs):
+        """Pass the formset to the template."""
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['ingredient_quantity_formset'] = IngredientQuantityFormSet(self.request.POST)
+        else:
+            context['ingredient_quantity_formset'] = IngredientQuantityFormSet()
+        return context
 
-   def form_valid(self, form):
-    form.instance.author = self.request.user
-    return super(AddMeal, self).form_valid(form)
+    def form_valid(self, form):
+        """Handle saving the Meal and its associated IngredientQuantities."""
+        context = self.get_context_data()
+        ingredient_quantity_formset = context['ingredient_quantity_formset']
+
+        if ingredient_quantity_formset.is_valid():
+            # Save the Meal instance first
+            meal = form.save(commit=False)
+            meal.author = self.request.user  # Set the current user as the author
+            meal.save()
+
+            # Save the IngredientQuantity formset
+            ingredient_quantities = ingredient_quantity_formset.save(commit=False)
+            for ingredient_quantity in ingredient_quantities:
+                ingredient_quantity.meal = meal  # Associate with the saved meal
+                ingredient_quantity.save()
+
+            return redirect(meal.get_absolute_url())  # Redirect to the detail view of the created meal
+
+        else:
+            # If formset is not valid, re-render the page with errors
+            return self.render_to_response(self.get_context_data(form=form))
 
 class EditMeal(LoginRequiredMixin, generic.UpdateView):
-   model = Meal
-   template_name = 'kcal/generic_form.html'
-   fields = ['name', 'ingredients']
+    model = Meal
+    form_class = MealForm
+    
+    def get_context_data(self, **kwargs):
+        """Pass the formset to the template."""
+        context = super().get_context_data(**kwargs)
+        meal = self.object
+        if self.request.POST:
+            context['ingredient_quantity_formset'] = IngredientQuantityFormSetWithNoExtra(self.request.POST, instance=meal)
+        else:
+            context['ingredient_quantity_formset'] = IngredientQuantityFormSetWithNoExtra(instance=meal)
+        return context
+
+    def form_valid(self, form):
+        """Handle saving the Meal and its associated IngredientQuantities."""
+        context = self.get_context_data()
+        ingredient_quantity_formset = context['ingredient_quantity_formset']
+
+        if ingredient_quantity_formset.is_valid():
+            # Save the Meal instance first
+            meal = form.save(commit=False)
+            meal.author = self.request.user  # Set the current user as the author
+            meal.save()
+
+            # Save the IngredientQuantity formset
+            ingredient_quantities = ingredient_quantity_formset.save(commit=False)
+            for ingredient_quantity in ingredient_quantities:
+                ingredient_quantity.meal = meal  # Associate with the saved meal
+                ingredient_quantity.save()
+
+            return redirect(meal.get_absolute_url())  # Redirect to the detail view of the created meal
+
+        else:
+            # If formset is not valid, re-render the page with errors
+            return self.render_to_response(self.get_context_data(form=form))
+# Ingredient CRUD
 
 class IngredientList(generic.ListView):
    model = Ingredient
@@ -95,7 +158,7 @@ class AddIngredient(LoginRequiredMixin, generic.CreateView):
 class EditIngredient(LoginRequiredMixin, generic.UpdateView):
    model = Ingredient
    template_name = 'kcal/generic_form.html'
-   fields = ['name', 'energy_density']
+   form_class = IngredientForm
 
    def form_valid(self, form):
     form.instance.author = self.request.user
