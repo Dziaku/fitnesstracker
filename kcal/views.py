@@ -7,9 +7,6 @@ from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
 from django.views import generic
 
-from datetime import timedelta
-
-
 from .models import *
 from .forms import *
 

@@ -23,7 +23,6 @@ class MealForm(forms.ModelForm):
         model = Meal
         fields = ['name']
 
-
 IngredientQuantityFormSet = forms.inlineformset_factory(
     Meal, 
     IngredientQuantity, 
@@ -31,6 +30,7 @@ IngredientQuantityFormSet = forms.inlineformset_factory(
     extra=1,  
     can_delete=False
 )
+
 IngredientQuantityFormSetWithNoExtra = forms.inlineformset_factory(
     Meal, 
     IngredientQuantity, 
