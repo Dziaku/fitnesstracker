@@ -1,0 +1,94 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<form method="post" id="mealForm" class="container mt-4">
+    {% csrf_token %}
+
+    <!-- Render the meal form -->
+    <div class="mb-3">
+        <h3>Meal</h3>
+        {{ form.as_p }}
+    </div>
+
+    <!-- Render the formset for ingredient-quantity pairs -->
+    <div class="mb-3">
+        <h3>Select Ingredients and Quantities</h3>
+        {{ ingredient_quantity_formset.management_form }}
+        <div id="ingredientFormset">
+            {% for form in ingredient_quantity_formset %}
+                <div class="form-row row mb-3">
+                    <div class="col-md-5">
+                        {{ form.ingredient.label_tag }} 
+                        {{ form.ingredient }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.ingredient_quantity.label_tag }} 
+                        {{ form.ingredient_quantity }}
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger removeIngredient">Remove</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Buttons section -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <button type="button" id="addIngredient" class="btn btn-primary w-100">Add Another Ingredient</button>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url "kcal:add-ingredient" %}"><button type="button" id="addNewIngredient" class="btn btn-primary w-100">Add New Ingredient</button></a>
+        </div>
+        <div class="col-md-4 text-end">
+            <button type="submit" class="btn btn-success w-100">Save Meal</button>
+        </div>
+    </div>
+</form>
+
+<!-- Bootstrap and custom JavaScript for formset management -->
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        let formsetContainer = document.getElementById('ingredientFormset');
+        let addIngredientButton = document.getElementById('addIngredient');
+        let totalForms = document.getElementById('id_ingredientquantity_set-TOTAL_FORMS');
+
+        // Function to add new form row
+        addIngredientButton.addEventListener('click', function() {
+            let formIdx = parseInt(totalForms.value);  // Get the current number of forms
+            let newForm = formsetContainer.querySelector('.form-row').cloneNode(true);  // Clone last form-row
+
+            // Update form input names and IDs to have the correct index
+            newForm.querySelectorAll('input, select').forEach(function(input) {
+                input.name = input.name.replace(/-\d+-/, '-' + formIdx + '-');  // Update form index
+                input.id = input.id.replace(/-\d+-/, '-' + formIdx + '-');  // Update input ID
+                input.value = '';  // Clear any default values
+            });
+
+            // Append the new form to the container
+            formsetContainer.appendChild(newForm);
+
+            // Increment the total number of forms in the formset
+            totalForms.value = formIdx + 1;
+
+            // Re-attach remove button event listeners for all "Remove" buttons
+            attachRemoveEventListeners();
+        });
+
+        // Function to attach event listeners for the "Remove" buttons
+        function attachRemoveEventListeners() {
+            document.querySelectorAll('.removeIngredient').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    if (document.querySelectorAll('.form-row').length > 1) {
+                        button.closest('.form-row').remove();  // Remove the form row
+                    }
+                });
+            });
+        }
+
+        // Attach remove event listeners for the initial formset
+        attachRemoveEventListeners();
+    });
+</script>
+{% endblock %}

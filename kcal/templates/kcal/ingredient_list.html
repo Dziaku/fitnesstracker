@@ -1,0 +1,31 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Ingredients</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Name </th>
+                <th scope="col">Kcal per 100 g </th>
+                <th scope="col">Author </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td><a href="{% url "kcal:edit-ingredient" object.id %}">{{object.name}}</a></td>
+                <td>{{object.energy_density}}</td>
+                <td>{{object.author}}</td>
+            </tr>
+            {% empty %}
+            <tr><td>Nothing is here. Yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="text-end">
+        <a href="{% url 'kcal:add-ingredient' %}" class="btn btn-primary">Add new Ingredient</a>
+    </div>
+</div>
+{% endblock %}

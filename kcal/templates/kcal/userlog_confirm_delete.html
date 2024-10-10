@@ -1,0 +1,8 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<form method="post">{% csrf_token %}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+        <button type="submit" class="btn btn-danger w-4">Confirm</button>
+    </form>
+{% endblock %}
