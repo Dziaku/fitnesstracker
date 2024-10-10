@@ -35,7 +35,7 @@ def sign_up(request):
             return render(request, 'register.html', {'form': form}) 
 
 ## KCAL-APP VIEWS
-# DailyConsumption CRUD
+# UserLog CRUD
 
 class KcalIndex(LoginRequiredMixin, generic.ListView):
     model = UserLog
