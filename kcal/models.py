@@ -50,36 +50,21 @@ class Meal(models.Model):
             energy += ingredient.energy_density * quantity
             energy = round(energy, 1) 
         return energy
-
     
 class IngredientQuantity(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
     ingredient_quantity = models.FloatField(default= 1)
     
-class DailyConsumption(models.Model):
-    date = models.DateField(default=timezone.now)
-    meals = models.ManyToManyField(Meal, through='MealQuantity')
-    eater = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = (('date','eater'),)
-    
-    def get_absolute_url(self):
-        return reverse("kcal:index") 
+class UserLog(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True, 
+        blank=True,
+    )
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=timezone.now)
 
     def __str__(self) -> str:
-        return f'{self.eater} consumed {self.total_day_energy}'
-    
-    @property
-    def total_day_energy(self):
-        energy = 0
-        for meal in self.meals.all():
-            quantity = MealQuantity.objects.get(meal=meal, day=self).meal_quantity
-            energy += meal.total_meal_energy*quantity
-        return energy
-
-class MealQuantity(models.Model):
-    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
-    day = models.ForeignKey(DailyConsumption, on_delete=models.CASCADE)
-    meal_quantity = models.IntegerField(default=1, choices=((i,i) for i in range(1, 101)))
+        return self.meal.name
